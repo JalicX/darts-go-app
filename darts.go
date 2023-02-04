@@ -18,7 +18,10 @@ type game struct {
 	throw          int
 }
 
-func _read_int_from_console(texts []string) int {
+func _read_int_from_console(texts []string) (int, error) {
+	if len(texts) < 1 {
+		log.Fatal("Param-Array 'texts' is empty")
+	}
 	for i := 0; i < len(texts)-1; i++ {
 		fmt.Println(texts[i])
 	}
@@ -28,10 +31,10 @@ func _read_int_from_console(texts []string) int {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return int_from_console
+	return int_from_console, nil
 }
 
-func _read_players_from_console(player_count int) []player {
+func _read_players_from_console(player_count int) ([]player, error) {
 	var players []player
 	reader := bufio.NewReader(os.Stdin)
 
@@ -45,24 +48,24 @@ func _read_players_from_console(player_count int) []player {
 		players = append(players, player)
 	}
 
-	return players
+	return players, nil
 }
 
-func init_game() game {
+func _init_game() (game, error) {
 	fmt.Println("Welcome to the Darts GO App!")
 
 	// Get Points to be played
-	var points = _read_int_from_console([]string{"Please Enter the points to be played.", "Common values are 501 or 301: "})
+	var points, _ = _read_int_from_console([]string{"Please Enter the points to be played.", "Common values are 501 or 301: "})
 	//var points = 2
 	//fmt.Println("Points are:", points)
 
 	// Get Player-Count
-	var player_count = _read_int_from_console([]string{"Please Enter the count of players: "})
+	var player_count, _ = _read_int_from_console([]string{"Please Enter the count of players: "})
 	//var player_count = 2
 	//fmt.Println("Player-count is:", points)
 
 	// Initialize Players
-	var players = _read_players_from_console(player_count)
+	var players, _ = _read_players_from_console(player_count)
 
 	var game = game{
 		players:        players,
@@ -70,18 +73,16 @@ func init_game() game {
 		throw:          0,
 	}
 
-	return game
+	return game, nil
 
 }
 
 func main() {
 	//text = strings.Replace(text, "\n", "", -1)
 	//fmt.Println("hello", text)
-	var gameconfig = init_game()
-	fmt.Println("Gameconfig is:")
-	fmt.Println(gameconfig)
-	/*if err != nil {
-		log.Fatal(err)
-	}*/
-	fmt.Println("Initialization finished")
+	var gameconfig, err = _init_game()
+	fmt.Println("Mode:", gameconfig.points_to_play, "Points to play")
+	if err == nil {
+		fmt.Println("Gameconfig sucessfully loaded...")
+	}
 }
