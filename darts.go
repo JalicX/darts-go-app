@@ -18,31 +18,20 @@ type game struct {
 	throw          int
 }
 
-func init_game() game {
-	// Get Points to be played
-	fmt.Println("Welcome to the Darts GO App!")
-	fmt.Println("Please Enter the points to be played.")
-	fmt.Println("Common values are 501 or 301:")
-	var points int
-	_, err := fmt.Scanf("%d\n", &points)
+func _read_int_from_console(texts []string) int {
+	for i := 0; i < len(texts)-1; i++ {
+		fmt.Println(texts[i])
+	}
+	fmt.Print(texts[len(texts)-1])
+	var int_from_console int
+	_, err := fmt.Scanf("%d\n", &int_from_console)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Points are:", points)
-	fmt.Println("Error is:", err)
-	//var points = 2
+	return int_from_console
+}
 
-	// Get Player-Count
-	fmt.Println("Please Enter the count of players:")
-	var player_count int
-	_, err = fmt.Scanf("%d\n", &player_count)
-	if err != nil {
-		log.Fatal(err)
-	}
-	//var player_count = 2
-
-	// Initialize Players
-	//var players := make(map[int]player)
+func _read_players_from_console(player_count int) []player {
 	var players []player
 	reader := bufio.NewReader(os.Stdin)
 
@@ -56,6 +45,25 @@ func init_game() game {
 		players = append(players, player)
 	}
 
+	return players
+}
+
+func init_game() game {
+	fmt.Println("Welcome to the Darts GO App!")
+
+	// Get Points to be played
+	var points = _read_int_from_console([]string{"Please Enter the points to be played.", "Common values are 501 or 301: "})
+	//var points = 2
+	//fmt.Println("Points are:", points)
+
+	// Get Player-Count
+	var player_count = _read_int_from_console([]string{"Please Enter the count of players: "})
+	//var player_count = 2
+	//fmt.Println("Player-count is:", points)
+
+	// Initialize Players
+	var players = _read_players_from_console(player_count)
+
 	var game = game{
 		players:        players,
 		points_to_play: points,
@@ -67,8 +75,6 @@ func init_game() game {
 }
 
 func main() {
-	fmt.Println("Hello, World!")
-
 	//text = strings.Replace(text, "\n", "", -1)
 	//fmt.Println("hello", text)
 	var gameconfig = init_game()
