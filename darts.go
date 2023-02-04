@@ -36,7 +36,7 @@ func _read_players_from_console(player_count int) []player {
 	reader := bufio.NewReader(os.Stdin)
 
 	for i := 0; i < player_count; i++ {
-		fmt.Print("Please enter the name of player", (i + 1), ": ")
+		fmt.Print("Please enter the name of player ", (i + 1), ": ")
 		player_name, _ := reader.ReadString('\n')
 		player := player{
 			name:          player_name,
