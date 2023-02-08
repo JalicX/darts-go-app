@@ -51,7 +51,22 @@ func _read_players_from_console(player_count int) ([]player, error) {
 	return players, nil
 }
 
-func _init_game() (game, error) {
+func _init_game(debug bool) (game, error) {
+	if debug {
+		return game{
+			players: []player{
+				{name: "Alice",
+					points_scored: 0},
+				{name: "Bob",
+					points_scored: 0},
+				{name: "Eve",
+					points_scored: 0},
+			},
+			points_to_play: 501,
+			throw:          0,
+		}, nil
+	}
+
 	fmt.Println("Welcome to the Darts GO App!")
 
 	// Get Points to be played
@@ -80,7 +95,8 @@ func _init_game() (game, error) {
 func main() {
 	//text = strings.Replace(text, "\n", "", -1)
 	//fmt.Println("hello", text)
-	var gameconfig, err = _init_game()
+	const DEBUG = true
+	var gameconfig, err = _init_game(DEBUG)
 	fmt.Println("Mode:", gameconfig.points_to_play, "Points to play")
 	if err == nil {
 		fmt.Println("Gameconfig sucessfully loaded...")
