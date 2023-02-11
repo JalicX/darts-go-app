@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	//"strings"
+	"strconv"
 )
 
 type player struct {
@@ -71,13 +71,9 @@ func _init_game(debug bool) (game, error) {
 
 	// Get Points to be played
 	var points, _ = _read_int_from_console([]string{"Please Enter the points to be played.", "Common values are 501 or 301: "})
-	//var points = 2
-	//fmt.Println("Points are:", points)
 
 	// Get Player-Count
 	var player_count, _ = _read_int_from_console([]string{"Please Enter the count of players: "})
-	//var player_count = 2
-	//fmt.Println("Player-count is:", points)
 
 	// Initialize Players
 	var players, _ = _read_players_from_console(player_count)
@@ -92,13 +88,19 @@ func _init_game(debug bool) (game, error) {
 
 }
 
+func run_game(game game) {
+	game.throw = game.throw + 1
+	fmt.Println("This is game Number", game.throw)
+
+}
+
 func main() {
-	//text = strings.Replace(text, "\n", "", -1)
-	//fmt.Println("hello", text)
-	const DEBUG = true
+	var DEBUG, _ = strconv.ParseBool(os.Getenv("DEBUG"))
+	//const DEBUG = true
 	var gameconfig, err = _init_game(DEBUG)
 	fmt.Println("Mode:", gameconfig.points_to_play, "Points to play")
 	if err == nil {
 		fmt.Println("Gameconfig sucessfully loaded...")
 	}
+	run_game(gameconfig)
 }
