@@ -13,9 +13,10 @@ type player struct {
 	points_scored int
 }
 type game struct {
-	players        []player
-	points_to_play int
-	throw          int
+	players         []player
+	points_to_play  int
+	throw           int
+	darts_per_throw int
 }
 
 func _read_int_from_console(texts []string) (int, error) {
@@ -62,8 +63,9 @@ func _init_game(debug bool) (game, error) {
 				{name: "Eve",
 					points_scored: 0},
 			},
-			points_to_play: 501,
-			throw:          0,
+			points_to_play:  501,
+			throw:           0,
+			darts_per_throw: 3,
 		}, nil
 	}
 
@@ -79,24 +81,48 @@ func _init_game(debug bool) (game, error) {
 	var players, _ = _read_players_from_console(player_count)
 
 	var game = game{
-		players:        players,
-		points_to_play: points,
-		throw:          0,
+		players:         players,
+		points_to_play:  points,
+		throw:           0,
+		darts_per_throw: 3,
 	}
 
 	return game, nil
 
 }
 
-func run_game(game game) {
+func run_round(game game) (game, error) {
 	game.throw = game.throw + 1
 	fmt.Println("This is game Number", game.throw)
+	for playercount := 0; playercount < len(game.players); playercount++ {
+		points_of_throw := 0
+		for dart := 0; dart < game.darts_per_throw; dart++ {
+			prompt := game.players[playercount].name + " please enter the points scored with dart " + strconv.Itoa(dart+1) + " "
+			points_of_dart, _ := _read_int_from_console([]string{prompt}) // Add Number of dart to text
+			points_of_throw += points_of_dart
+		}
+		fmt.Println("you have thrown:", points_of_throw, "Points total")
+		game.players[playercount].points_scored += points_of_throw
+	}
+	return game, nil
+}
 
+func run_game(game game) {
+	again := true
+	for again {
+		game, _ = run_round(game)
+		for playercount := 0; playercount < len(game.players); playercount++ {
+			if game.players[playercount].points_scored == game.points_to_play {
+				fmt.Println("WINNER WINNER CHICKEN DINNER for", game.players[playercount].name)
+				again = false
+			}
+		}
+	}
 }
 
 func main() {
-	var DEBUG, _ = strconv.ParseBool(os.Getenv("DEBUG"))
-	//const DEBUG = true
+	//var DEBUG, _ = strconv.ParseBool(os.Getenv("DEBUG"))
+	const DEBUG = true
 	var gameconfig, err = _init_game(DEBUG)
 	fmt.Println("Mode:", gameconfig.points_to_play, "Points to play")
 	if err == nil {
